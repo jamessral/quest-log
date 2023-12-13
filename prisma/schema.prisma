@@ -14,8 +14,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password Password?
-  notes    Note[]
+  password        Password?
+  campaigns       Campaign[]
+  campaignPlayers CampaignUser[]
 }
 
 model Password {
@@ -25,14 +26,39 @@ model Password {
   userId String @unique
 }
 
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
+model Campaign {
+  id          String @id @default(cuid())
+  title       String
+  description String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+
+  campaignPlayers CampaignUser[]
+}
+
+model CampaignUser {
+  id String @id @default(cuid())
+
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  campaignId String
+
+  player   User   @relation(fields: [playerId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  playerId String
+
+  party Party[]
+
+  active     Boolean
+  favorite   Boolean
+  gameMaster Boolean
+}
+
+model Party {
+  id       String @id @default(cuid())
+  nickname String
+
+  players CampaignUser[]
 }
